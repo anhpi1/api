@@ -1,0 +1,26 @@
+[
+    {
+        "cau_hoi": "What is comparator",
+        "nhan_so": [
+            "[1, 0, 12, 0, 0, 0, 0, 0, 0]"
+        ],
+        "nhan_chu": [
+            "['definition', '', 'comparator ', '', '', '', '', '', '']"
+        ],
+        "cau_tra_loi": [
+            "a comparator is a circuit that compares two analog input voltages and provides a digital output, typically a high or low voltage, indicating which input is larger"
+        ]
+    },
+    {
+        "cau_hoi": "What is comparator",
+        "nhan_so": [
+            "[1, 0, 12, 0, 0, 0, 0, 0, 0]"
+        ],
+        "nhan_chu": [
+            "['definition', '', 'comparator ', '', '', '', '', '', '']"
+        ],
+        "cau_tra_loi": [
+            "a comparator is a circuit that compares two analog input voltages and provides a digital output, typically a high or low voltage, indicating which input is larger"
+        ]
+    }
+]
