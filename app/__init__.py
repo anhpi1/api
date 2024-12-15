@@ -12,7 +12,7 @@ import config.settings as ts
 tf.config.threading.set_intra_op_parallelism_threads(os.cpu_count())
 tf.config.threading.set_inter_op_parallelism_threads(os.cpu_count())
 from googletrans import Translator
-
+import json
 
 
 
@@ -144,53 +144,69 @@ def translate_lang(text,lang):
 
 class ModelManager:
     def __init__(self):
-        self.question_last=None
+        self.question_last = None
         self.model_du_doan = None
         self.model_du_doan_khong_gom_true_false = None
 
-    def final_du_doan(self, questionn, models, true_answer=None):
-        question,lang=translate_en(questionn)
-        temp1=[]
-        temp2=[]
+    def final_du_doan(self, questionn, models, true_answer=None, ts=None):
+        question, lang = translate_en(questionn)
+        temp1 = []
+        temp2 = []
         print("question: {}".format(question))
+
+        # Update training data if a true answer is provided
         if true_answer is not None:
             print("du doan    :{}".format(self.model_du_doan))
             print("true_answer:{}".format(true_answer))
-            #print(self.model_du_doan_khong_gom_true_false)
-            repair_train(self.question_last,self.model_du_doan,self.model_du_doan_khong_gom_true_false,true_answer)
-        
-        self.question_last=question
+            repair_train(self.question_last, self.model_du_doan, self.model_du_doan_khong_gom_true_false, true_answer)
+
+        # Update question and model predictions
+        self.question_last = question
         self.model_du_doan, self.model_du_doan_khong_gom_true_false = du_doan(question, models)
-        if(ts.co_gom_true_false):
+
+        # Decide which prediction to use based on ts.co_gom_true_false
+        if ts and ts.co_gom_true_false:
             answer = sp.replace_positive(self.model_du_doan)
         else:
             print(0)
-            answer = sp.replace_positive(self.model_du_doan_khong_gom_true_false) #
+            answer = sp.replace_positive(self.model_du_doan_khong_gom_true_false)
+
         final_answer = []
 
-        # Tìm kiếm trong SQL Server
-        con = sp.search_with_conditions_sqlserver(self.model_du_doan)
-        if con:
-            temp1.append("{}".format(self.model_du_doan))
-            temp2.append("{}".format(translate_label(self.model_du_doan)))
-            final_answer.append(translate_lang(con[0],lang))
-        for row in answer:
-            con = sp.search_with_conditions_sqlserver(row)
+        # Search SQL Server for predictions
+        def add_to_final_answer(prediction):
+            con = sp.search_with_conditions_sqlserver(prediction)
             if con:
-                temp1.append("{}".format(row))
-                temp2.append("{}".format(translate_label(row)))
-                final_answer.append(translate_lang(con[0],lang))
-        file_path="data_user.json"
-        new_data={
-            "cau_hoi":question,
-            "nhan_so":temp1,
-            "nhan_chu":temp2,
-            "cau_tra_loi":final_answer
+                temp1.append("{}".format(prediction))
+                temp2.append("{}".format(translate_label(prediction)))
+                final_answer.append(con[0])
+
+        # Search for main prediction and additional answers
+        add_to_final_answer(self.model_du_doan)
+        for row in answer:
+            add_to_final_answer(row)
+
+        # Handle case where no answers are found
+        if not final_answer:
+            final_answer.append("Sorry, I don't have an answer to your question.")
+
+        # Translate answers back to the original language
+        final_answer_translate = [translate_lang(a, lang) for a in final_answer]
+
+        # Save user question and answers to file
+        file_path = "data_user.json"
+        new_data = {
+            "cau_hoi": question,
+            "nhan_so": temp1,
+            "nhan_chu": temp2,
+            "cau_tra_loi": final_answer
         }
         WriteUserQuestion(file_path, new_data)
-        return final_answer
 
-import json
+        return final_answer_translate
+
+
+
 
 def WriteUserQuestion(file_path, new_data):
     try:

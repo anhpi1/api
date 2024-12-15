@@ -34,6 +34,7 @@ a = Analysis(
         'itertools',   # itertools (nếu cần)
         'app.models',  # app.models để bao gồm các mô-đun trong ứng dụng của bạn
         'app.utils',   # app.utils để bao gồm các mô-đun trong ứng dụng của bạn
+        'googletrans',
     ],
     hookspath=[],
     hooksconfig={},
