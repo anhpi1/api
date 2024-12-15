@@ -11,6 +11,9 @@ from tensorflow.keras.models import load_model
 import config.settings as ts
 tf.config.threading.set_intra_op_parallelism_threads(os.cpu_count())
 tf.config.threading.set_inter_op_parallelism_threads(os.cpu_count())
+from googletrans import Translator
+
+
 
 
 
@@ -123,13 +126,30 @@ def repair_train(question_false,false_answer,false_answer_no_include_true_false,
             del model,new_model_true_false
         c=c+1
 
+def translate_en(text):
+    translator = Translator()
+    # Phát hiện ngôn ngữ của văn bản
+    detection = translator.detect(text)  
+    # Dịch văn bản từ ngôn ngữ phát hiện sang tiếng Anh
+    translated = translator.translate(text, src=detection.lang, dest='en')   
+    return translated.text,detection.lang
+
+def translate_lang(text,lang):
+    translator = Translator()
+    # Phát hiện ngôn ngữ của văn bản
+    detection = translator.detect(text)  
+    # Dịch văn bản từ ngôn ngữ phát hiện sang tiếng Anh
+    translated = translator.translate(text, src='en', dest=lang)   
+    return translated.text
+
 class ModelManager:
     def __init__(self):
         self.question_last=None
         self.model_du_doan = None
         self.model_du_doan_khong_gom_true_false = None
 
-    def final_du_doan(self, question, models, true_answer=None):
+    def final_du_doan(self, questionn, models, true_answer=None):
+        question,lang=translate_en(questionn)
         temp1=[]
         temp2=[]
         print("question: {}".format(question))
@@ -153,13 +173,13 @@ class ModelManager:
         if con:
             temp1.append("{}".format(self.model_du_doan))
             temp2.append("{}".format(translate_label(self.model_du_doan)))
-            final_answer.append(con[0])
+            final_answer.append(translate_lang(con[0],lang))
         for row in answer:
             con = sp.search_with_conditions_sqlserver(row)
             if con:
                 temp1.append("{}".format(row))
                 temp2.append("{}".format(translate_label(row)))
-                final_answer.append(con[0])
+                final_answer.append(translate_lang(con[0],lang))
         file_path="data_user.json"
         new_data={
             "cau_hoi":question,
@@ -248,9 +268,9 @@ def check_model_loading(model_list):
 #     models.append(new_model)
 
 # # Thực hiện dự đoán
+# answer = model_manager.final_du_doan("Bộ so sánh là gì?", models)
+# print(answer)
 # answer = model_manager.final_du_doan("what is comparator ?", models)
 # print(answer)
-# answer = model_manager.final_du_doan("when is comparator ?", models)
-# print(answer)
-# answer = model_manager.final_du_doan("how we use comparator ?", models)
+# answer = model_manager.final_du_doan("什么是比较器 ?", models)
 # print(answer)

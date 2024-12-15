@@ -22,5 +22,41 @@
         "cau_tra_loi": [
             "a comparator is a circuit that compares two analog input voltages and provides a digital output, typically a high or low voltage, indicating which input is larger"
         ]
+    },
+    {
+        "cau_hoi": "What is a comparison?",
+        "nhan_so": [
+            "[1, 0, 12, 0, 0, 0, 0, 0, 0]"
+        ],
+        "nhan_chu": [
+            "['definition', '', 'comparator ', '', '', '', '', '', '']"
+        ],
+        "cau_tra_loi": [
+            "Một bộ so sánh là một mạch so sánh hai điện áp đầu vào tương tự và cung cấp đầu ra kỹ thuật số, thường là điện áp cao hoặc thấp, cho biết đầu vào nào lớn hơn"
+        ]
+    },
+    {
+        "cau_hoi": "what is comparator ?",
+        "nhan_so": [
+            "[1, 0, 12, 0, 0, 0, 0, 0, 0]"
+        ],
+        "nhan_chu": [
+            "['definition', '', 'comparator ', '', '', '', '', '', '']"
+        ],
+        "cau_tra_loi": [
+            "a comparator is a circuit that compares two analog input voltages and provides a digital output, typically a high or low voltage, indicating which input is larger"
+        ]
+    },
+    {
+        "cau_hoi": "What is a comparator?",
+        "nhan_so": [
+            "[1, 0, 12, 0, 0, 0, 0, 0, 0]"
+        ],
+        "nhan_chu": [
+            "['definition', '', 'comparator ', '', '', '', '', '', '']"
+        ],
+        "cau_tra_loi": [
+            "比较器是一个比较两个模拟输入电压并提供数字输出的电路，通常是高电压或低电压，表明哪种输入更大"
+        ]
     }
 ]
